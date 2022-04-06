@@ -9,15 +9,18 @@ public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
+    @Column(nullable = false)
     private int memberIdx;
 
-    @Column
+    @Column(nullable = false)
+    private String id;
+
+    @Column(nullable = false)
     private String encryptPassword;
 
-    @Column
+    @Column(nullable = false)
     private String nickname;
 
-    @Column
+    @Column(nullable = false)
     private Date birthdate;
 }
