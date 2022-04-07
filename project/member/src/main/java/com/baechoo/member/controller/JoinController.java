@@ -5,6 +5,7 @@ import com.baechoo.member.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -17,13 +18,14 @@ public class JoinController {
     @Autowired
     private MemberService memberService;
 
-    @GetMapping("/join")
+    @GetMapping("join")
     public String join() {
-        return "/join";
+        return "join";
     }
 
-    //@PostMapping("/join")
-    /*public String join(@Valid MemberDTO memberDTO) {
-        memberService.save(memberDTO);
-    }*/
+    @PostMapping("join")
+    public String join(@Valid @ModelAttribute MemberDTO memberDTO) {
+        memberService.join(memberDTO);
+        return "join";
+    }
 }

@@ -10,6 +10,7 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema baechoo
 -- -----------------------------------------------------
+DROP SCHEMA IF EXISTS `baechoo` ;
 
 -- -----------------------------------------------------
 -- Schema baechoo
@@ -18,26 +19,29 @@ CREATE SCHEMA IF NOT EXISTS `baechoo` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8
 USE `baechoo` ;
 
 -- -----------------------------------------------------
--- Table `baechoo`.`Member`
+-- Table `baechoo`.`member`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `baechoo`.`Member` (
+DROP TABLE IF EXISTS `baechoo`.`member` ;
+
+CREATE TABLE IF NOT EXISTS `baechoo`.`member` (
   `member_idx` INT NOT NULL AUTO_INCREMENT,
-  `id` VARCHAR(15) NOT NULL,
+  `id` VARCHAR(20) NOT NULL,
   `encrypt_password` VARCHAR(15) NOT NULL,
-  `nickname` VARCHAR(20) NOT NULL,
-  `birthdate` DATETIME NOT NULL,
+  `nickname` VARCHAR(20) NULL DEFAULT NULL,
+  `birthdate` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`member_idx`),
   UNIQUE INDEX `member_id_UNIQUE` (`id` ASC) VISIBLE,
-  UNIQUE INDEX `member_idx_UNIQUE` (`member_idx` ASC) VISIBLE,
   UNIQUE INDEX `nickname_UNIQUE` (`nickname` ASC) VISIBLE)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb3;
 
 
 -- -----------------------------------------------------
--- Table `baechoo`.`Member_Secede`
+-- Table `baechoo`.`member_secede`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `baechoo`.`Member_Secede` (
+DROP TABLE IF EXISTS `baechoo`.`member_secede` ;
+
+CREATE TABLE IF NOT EXISTS `baechoo`.`member_secede` (
   `member_idx` INT NOT NULL AUTO_INCREMENT,
   `id` VARCHAR(15) NOT NULL,
   `secede_date` DATETIME(6) NOT NULL,

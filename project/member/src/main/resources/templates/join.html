@@ -6,7 +6,7 @@
 <div th:replace="fragments/headerbar :: headerbar" />
 <div class="container">
     <main class="text-center">
-         <form class="form-join" th:action="@{/join}" method="post">
+        <form class="form-join" method="post" th:action="@{/join}" th:object="${memberDto}">
             <img class="mb-4" src="/img/logo3.PNG" alt="" width="180" height="57">
             <h1 class="h3 mb-3 font-weight-normal">회원가입</h1>
 
@@ -17,13 +17,12 @@
             <input type="text" id="nickname" name="nickname" class="form-control" placeholder="닉네임" required autofocus>
 
             <label for="password" class="visually-hidden">password</label>
-            <input type="password" id="password" name="password" class="form-control" placeholder="패스워드" required>
+            <input type="password" id="password" name="password" class="form-control" placeholder="비밀번호" required>
 
             <label for="birthdate" class="visually-hidden">birthdate</label>
             <input type="date" id="birthdate" name="birthdate" class="form-control" placeholder="생년월일" required>
 
             <button class="w-100 btn btn-lg btn-primary" type="submit">회원가입</button>
-            <p class="mt-5 mb-3 text-muted">&copy;2021</p>
         </form>
     </main>
 </div>
