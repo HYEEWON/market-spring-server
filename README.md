@@ -55,4 +55,5 @@
 
 ## 공부한 내용
 
-* [스프링: 웹 계층과 DAO/DTO](https://github.com/HYEEWON/market-spring-server/blob/main/study/spring-web-layer-dao-dto.md)
+* [Spring: 웹 계층과 DAO/DTO](./documents/spring-web-layer-dao-dto.md)
+* [Spring JPA: Fetch 전략과 N+1 문제](./documents/spring-jpa-fetch.md)
