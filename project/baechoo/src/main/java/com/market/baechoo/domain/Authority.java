@@ -20,6 +20,6 @@ import javax.persistence.Table;
 @AllArgsConstructor
 public class Authority {
     @Id
-    @Column(length = 25, unique = true)
+    //@Column(length = 25, unique = true)
     private String authority;
 }

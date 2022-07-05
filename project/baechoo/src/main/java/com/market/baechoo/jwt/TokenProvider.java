@@ -8,57 +8,71 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.security.Key;
 import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class TokenProvider {
 
-    private Logger logger = LoggerFactory.getLogger(TokenProvider.class);
+    private final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
 
-    @Value("${jwt.header}")
-    private String AUTHORITIES_KEY;
+    private final String AUTHORITIES_KEY = "auth";
 
-    private final String secret; // 토큰 체크 시 필요한 암호 키
+    @Value("${jwt.secret}")
+    private String secret; // 토큰 체크 시 필요한 암호 키
 
-    private final long tokenValidityInMilliseconds;
+    @Value("${jwt.token-validity-in-milliseconds}")
+    private long tokenValidityInMilliseconds;
+
+    private final UserDetailsService userDetailsService;
 
     private Key key;
 
-    public TokenProvider(
-            @Value("${jwt.secret}") String secret,
-            @Value("${jwt.token-validity-in-milliseconds}") long tokenValidityInSeconds) {
-        this.secret = secret;
-        this.tokenValidityInMilliseconds = tokenValidityInSeconds;
-    }
-
     @PostConstruct
-    public void initKey() throws Exception {
+    public void init() throws Exception {
         byte[] keyBytes = Decoders.BASE64.decode(secret);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    // Authentication 객체의 권한 정보를 이용해 토큰 생성
-    public String createToken(Authentication authentication) {
-        String authorities = authentication.getAuthorities().stream()
+    public String createToken(Integer memberNum, List<String> roles) {
+        /*String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
+                .collect(Collectors.joining(","));*/
+        Claims claims = Jwts.claims().setSubject(String.valueOf(memberNum));
+        claims.put("roles", roles);
 
         long now = (new Date()).getTime();
         Date validity = new Date(now + this.tokenValidityInMilliseconds);
 
         return Jwts.builder()
-                .setSubject(authentication.getName())
-                .claim(AUTHORITIES_KEY, authorities)
+                .setClaims(claims)
+                //.setSubject(authentication.getName())
+                //.claim(AUTHORITIES_KEY, authorities)
                 .signWith(key, SignatureAlgorithm.HS512)
                 .setExpiration(validity)
                 .compact();
+    }
+
+    public Authentication getAuthentication(String token) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(this.getMemberNumber(token));
+        return new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities());
+    }
+
+    public String getMemberNumber(String token) {
+        return Jwts.parserBuilder().setSigningKey(key).build().
+                parseClaimsJws(token).getBody().getSubject();
     }
 
     // 토큰 유효성 검사
