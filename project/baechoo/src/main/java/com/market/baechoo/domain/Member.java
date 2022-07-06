@@ -7,8 +7,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
@@ -25,7 +24,7 @@ public class Member implements UserDetails {
     @Column(nullable = false, unique = true)
     private String id;
 
-    //@Column(nullable = false)
+    @Column(nullable = false)
     private String encryptPassword;
 
     @Column(nullable = false)
@@ -34,21 +33,21 @@ public class Member implements UserDetails {
     @Column(nullable = false)
     private String birthdate;
 
-    @ManyToMany
-    //@ElementCollection
+    @ManyToMany(targetEntity = Authority.class)
     @JoinTable(
             name="Member_Authority",
             joinColumns = {@JoinColumn(name="member_idx", referencedColumnName = "memberIdx")},
             inverseJoinColumns = {@JoinColumn(name="authority", referencedColumnName = "authority")}
     )
-    private Set<Authority> authorities;
+    private Set<Authority> authorities = new HashSet<>();
 
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.authorities.stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+        Set<GrantedAuthority> roles = new HashSet<GrantedAuthority>();
+        for (Authority auth : authorities)
+            roles.add(new SimpleGrantedAuthority(auth.getAuthority()));
+        return roles;
     }
 
     @Override
