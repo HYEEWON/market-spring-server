@@ -30,6 +30,7 @@
 4. DB : MySQL
 5. Deploy : AWS EC2
 6. Etc: Thymeleaf, Spring Security, JPA, AWS S3
+7. 문서화: [GitHub Wiki](https://github.com/HYEEWON/market-spring-server/wiki/Wiki-Home)
 
 <br>
 
@@ -53,7 +54,3 @@
 
 <br>
 
-## 공부한 내용
-
-* [Spring: 웹 계층과 DAO/DTO](./documents/spring-web-layer-dao-dto.md)
-* [Spring JPA: Fetch 전략과 N+1 문제](./documents/spring-jpa-fetch.md)
