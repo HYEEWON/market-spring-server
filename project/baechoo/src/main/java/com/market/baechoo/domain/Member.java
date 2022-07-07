@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 @Entity
 @Table
-@Builder
+@Builder.Default
 @AllArgsConstructor
 public class Member implements UserDetails {
 
