@@ -32,6 +32,6 @@ jobs:
       run: chmod +x gradlew
       working-directory: ./project/baechoo
     - name: Build with Gradle
-      run: ./gradlew build
+      run: ./gradlew build clean build -x test
       working-directory: ./project/baechoo
       
