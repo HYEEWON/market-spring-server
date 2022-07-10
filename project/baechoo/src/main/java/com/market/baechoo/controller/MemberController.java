@@ -7,17 +7,22 @@ import com.market.baechoo.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 @Controller
 @RequestMapping("/account")
@@ -26,6 +31,9 @@ public class MemberController {
 
     private final MemberService memberService;
     private ResponseCreator responseCreator;
+
+    @Value("${jwt.header}")
+    private String AUTHORIZATION_HEADER;
 
     @GetMapping("/join")
     public String join() {
@@ -41,35 +49,34 @@ public class MemberController {
     public String join(@ModelAttribute MemberJoinDto memberDTO, BindingResult bindingResult,
                        HttpServletResponse response) throws IOException {
         if (bindingResult.hasErrors()) {
-            response.setContentType("text/html; charset=euc-kr");
-            PrintWriter out = response.getWriter();
-            out.println("<script>alert('잘못된 입력입니다.'); </script>");
-            out.flush();
+            responseCreator = new ResponseCreator();
+            responseCreator.createAlert(response, "잘못된 입력입니다.");
             return "forward:/join";
             //return "<script>alert('아이디는 5~20자의 영문 소문자와 숫자만 사용 가능합니다.'); </script>";
         }
-        System.out.println("join controller ############################");
         memberService.join(memberDTO);
         return "redirect:/";
     }
 
     @PostMapping("/login")
-    public String login(@ModelAttribute MemberLoginDto memberLoginDto, BindingResult bindingResult
-    , Model model, HttpServletResponse response) throws IOException {
-        if (bindingResult.hasErrors()) {
-            response.setContentType("text/html; charset=euc-kr");
-            PrintWriter out = response.getWriter();
-            out.println("<script>alert('잘못된 입력입니다.'); </script>");
-            out.flush();
-            return "forward:/login";
-        }
+    @ResponseBody
+    public ResponseEntity<?> login(@ModelAttribute MemberLoginDto memberLoginDto, BindingResult bindingResult
+    , Model model, HttpServletResponse response) throws IOException, URISyntaxException {
+        responseCreator = new ResponseCreator();
+
         String result = memberService.login(memberLoginDto);
-        if (result.equals("1") || result.equals("2")) {
-            responseCreator.createAlert(response, "존재하지 않는 아이디 또는 잘못된 비밀번호입니다.");
-            return "forward:/login";
+        if (bindingResult.hasErrors() || result.equals("1") || result.equals("2")) {
+            return new ResponseEntity<>("<script>alert('" + "존재하지 않는 아이디 또는 잘못된 비밀번호입니다." + "'); location.href='" +
+                    "http://localhost:8080/account/login" + "';</script>", HttpStatus.FOUND);
         }
-        model.addAttribute("jwt", result);
-        System.out.println(result);
-        return "redirect:/";
+
+        System.out.println("result:" + result);
+
+        URI redirectUri = new URI("http://localhost:8080");
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setLocation(redirectUri);
+        httpHeaders.add(AUTHORIZATION_HEADER, "Bearer " + result);
+
+        return new ResponseEntity<>(result, httpHeaders, HttpStatus.FOUND);
     }
 }

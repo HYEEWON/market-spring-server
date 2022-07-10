@@ -30,8 +30,6 @@ public class TokenProvider {
 
     private final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
 
-    private final String AUTHORITIES_KEY = "auth";
-
     @Value("${jwt.secret}")
     private String secret; // 토큰 체크 시 필요한 암호 키
 

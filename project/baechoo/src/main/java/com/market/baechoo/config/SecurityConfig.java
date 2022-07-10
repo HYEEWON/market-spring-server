@@ -35,6 +35,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests()
                 .antMatchers("/", "/account/join", "/account/login").permitAll()
+                //.antMatchers("/product/**").hasRole("USER")
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement()
