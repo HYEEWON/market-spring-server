@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
-<link rel="stylesheet" href="/css/join.css" />
 <head th:replace="fragments/head :: head" />
 <body>
 <div th:replace="fragments/header :: header" />
 <div class="container">
     <main class="text-center">
-        <form class="form-input" method="post" th:action="@{/account/join}" th:object="${memberDto}">
+        <form class="form-input" method="post" th:action="@{/account/join}" th:object="${memberJoinDto}">
             <img class="mb-4" src="/img/logo3.PNG" alt="" width="180" height="57">
-            <h1 class="h3 mb-3 font-weight-normal">회원가입</h1>
 
             <label for="id" class="visually-hidden">id</label>
             <input type="text" id="id" name="id" class="form-control" placeholder="아이디" required autofocus>

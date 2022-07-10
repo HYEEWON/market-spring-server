@@ -1,34 +1,20 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
-<link rel="stylesheet" href="/css/login.css" />
 <head th:replace="fragments/head :: head" />
 <body>
 <div th:replace="fragments/header :: header" />
 <div class="container">
     <main class="text-center">
-        <form class="form-input" th:action="@{/account/login}" method="post">
+        <form class="form-input" method="post" th:action="@{/account/login}" th:object="${memberLoginDto}">
             <img class="mb-4" src="/img/logo3.PNG" alt="" width="180" height="57">
-            <h1 class="h3 mb-3 fw-normal">로그인</h1>
 
-            <div th:if="${param.error}" class="alert alert-danger" role="alert">
-                아이디 혹은 비밀번호가 일치하지 않습니다.
-            </div>
-            <div th:if="${param.logout}" class="alert alert-primary" role="alert">
-                로그아웃 되었습니다.
-            </div>
+            <label for="id" class="visually-hidden">id</label>
+            <input type="text" id="id" name="id" class="form-control" placeholder="아이디" required autofocus>
 
-            <label for="inputId" class="visually-hidden">id</label>
-            <input type="text" id="inputId" name="username" class="form-control" placeholder="아이디" required autofocus>
+            <label for="password" class="visually-hidden">password</label>
+            <input type="password" id="password" name="password" class="form-control" placeholder="비밀번호" required>
 
-            <label for="inputPassword" class="visually-hidden">password</label>
-            <input type="password" id="inputPassword" name="password" class="form-control" placeholder="패스워드" required>
-<!--            <div class="checkbox mb-3">-->
-<!--                <label>-->
-<!--                    <input type="checkbox" value="remember-me"> Remember me-->
-<!--                </label>-->
-<!--            </div>-->
             <button class="w-100 btn btn-lg btn-primary" type="submit">로그인</button>
-            <p class="mt-5 mb-3 text-muted">&copy;2022</p>
         </form>
     </main>
 </div>

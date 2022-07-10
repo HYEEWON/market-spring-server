@@ -1,5 +1,6 @@
 package com.market.baechoo.jwt;
 
+import com.market.baechoo.domain.Authority;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -20,6 +21,7 @@ import javax.annotation.PostConstruct;
 import java.security.Key;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -46,31 +48,32 @@ public class TokenProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String createToken(Integer memberNum, List<String> roles) {
+    public String createToken(Integer memberIdx, String nickname, Set<Authority> roles) {
         /*String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));*/
-        Claims claims = Jwts.claims().setSubject(String.valueOf(memberNum));
-        claims.put("roles", roles);
+        //Claims claims = Jwts.claims().setSubject(String.valueOf(memberNum));
+        //claims.put("roles", roles);
 
         long now = (new Date()).getTime();
         Date validity = new Date(now + this.tokenValidityInMilliseconds);
 
         return Jwts.builder()
-                .setClaims(claims)
-                //.setSubject(authentication.getName())
-                //.claim(AUTHORITIES_KEY, authorities)
+                .claim("roles", roles)
+                .claim("memberIdx", memberIdx)
+                .claim("nickname", nickname)
+                .setSubject("asd")
                 .signWith(key, SignatureAlgorithm.HS512)
                 .setExpiration(validity)
                 .compact();
     }
 
     public Authentication getAuthentication(String token) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(this.getMemberNumber(token));
+        UserDetails userDetails = userDetailsService.loadUserByUsername(this.getClaims(token));
         return new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities());
     }
 
-    public String getMemberNumber(String token) {
+    public String getClaims(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build().
                 parseClaimsJws(token).getBody().getSubject();
     }

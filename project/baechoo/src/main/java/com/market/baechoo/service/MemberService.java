@@ -5,5 +5,5 @@ import com.market.baechoo.dto.MemberLoginDto;
 
 public interface MemberService {
     public Integer join(MemberJoinDto memberJoinDto);
-    public Integer login(MemberLoginDto memberLoginDto);
+    public String login(MemberLoginDto memberLoginDto);
 }

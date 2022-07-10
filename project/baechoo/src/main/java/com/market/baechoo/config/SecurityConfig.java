@@ -37,12 +37,6 @@ public class SecurityConfig {
                 .antMatchers("/", "/account/join", "/account/login").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .formLogin()
-                .loginPage("/account/login")
-                //.failureUrl("/account/login?error")
-                .permitAll()
-                .defaultSuccessUrl("/")
-                .and() // 세션을 사용하지 않음
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()

@@ -18,6 +18,7 @@ import javax.persistence.Table;
 @Table
 @Builder
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor
 public class Authority {
     @Id
